@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  role         String    @default("user")
+  avatar       String?
+  organization String    @default("KGS Consulting")
+  createdAt    DateTime  @default(now())
+  requests     Request[]
+}
+
+model Request {
+  id                      String       @id @default(cuid())
+  projectNumber           Int          @unique
+  projectName             String
+  category                String
+  createdOnBehalfOf       String
+  requestSummary          String
+  message                 String?
+  creativeSuggestion      String?
+  additionalConsideration String?
+  primaryAudience         String?
+  teamName                String
+  sender                  String?
+  targetAudienceGeo       String?
+  requestedOn             DateTime
+  targetReleaseDate       DateTime?
+  deadline                DateTime?
+  status                  String       @default("Brief submitted")
+  iterations              Int          @default(0)
+  requestedBy             String
+  description             String?
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+  userId                  String?
+  user                    User?        @relation(fields: [userId], references: [id])
+  hourEntries             HourEntry[]
+}
+
+model HourEntry {
+  id            String   @id @default(cuid())
+  requestId     String
+  request       Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  hours         Float
+  category      String
+  subCategory   String
+  date          DateTime
+  remarks       String?
+  effortSpentBy String
+  createdAt     DateTime @default(now())
+}
+
+model Template {
+  id       String @id @default(cuid())
+  name     String
+  fileType String
+  fileUrl  String @default("#")
+}
+
+model CalendarEvent {
+  id    String   @id @default(cuid())
+  title String
+  date  DateTime
+  type  String   @default("delivery")
+  color String   @default("#4ebce9")
+}
+
+model GalleryProject {
+  id       String @id @default(cuid())
+  title    String
+  imageUrl String
+  order    Int    @default(0)
+}
+
+model GalleryCategory {
+  id          String  @id @default(cuid())
+  title       String
+  gradient    String
+  hasPptIcon  Boolean @default(false)
+  order       Int     @default(0)
+}
+
+model TeamMember {
+  id     String @id @default(cuid())
+  name   String
+  email  String
+  role   String
+  avatar String?
+}
