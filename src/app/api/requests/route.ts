@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { missingRequestLabels } from "@/features/requests/required-fields";
 import { generateProjectNumber } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
@@ -23,10 +24,15 @@ export async function GET(request: NextRequest) {
   if (requestedBy) where.requestedBy = requestedBy;
   if (from || to) {
     where.requestedOn = {};
-    if (from) (where.requestedOn as Record<string, Date>).gte = new Date(from);
-    if (to) (where.requestedOn as Record<string, Date>).lte = new Date(to);
+    if (from) (where.requestedOn as Record<string, Date>).gte = new Date(`${from}T00:00:00.000Z`);
+    if (to) (where.requestedOn as Record<string, Date>).lte = new Date(`${to}T23:59:59.999Z`);
   }
-  if (deadline) where.deadline = new Date(deadline);
+  if (deadline) {
+    where.deadline = {
+      gte: new Date(`${deadline}T00:00:00.000Z`),
+      lte: new Date(`${deadline}T23:59:59.999Z`),
+    };
+  }
 
   const requests = await prisma.request.findMany({
     where,
@@ -38,6 +44,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
+  const missing = missingRequestLabels(body);
+  if (missing.length > 0) {
+    return NextResponse.json(
+      { error: "Fill in the required fields.", fields: missing },
+      { status: 400 },
+    );
+  }
 
   let projectNumber = body.projectNumber;
   if (!projectNumber) {
@@ -64,7 +77,7 @@ export async function POST(request: NextRequest) {
       requestedOn: body.requestedOn ? new Date(body.requestedOn) : new Date(),
       targetReleaseDate: body.targetReleaseDate ? new Date(body.targetReleaseDate) : null,
       deadline: body.deadline ? new Date(body.deadline) : null,
-      status: body.status || "Brief submitted",
+      status: "Brief submitted",
       requestedBy: body.requestedBy || body.createdOnBehalfOf || "Chacko, Arun",
       description: body.description,
     },

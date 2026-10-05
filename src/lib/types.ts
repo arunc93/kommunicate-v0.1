@@ -1,14 +1,27 @@
-export type RequestStatus =
-  | "Brief submitted"
-  | "Design in progress"
-  | "Draft delivered"
-  | "Completed";
+export const REQUEST_STATUSES = [
+  "Brief submitted",
+  "Internal review",
+  "Design in progress",
+  "Content in progress",
+  "Draft delivered",
+  "Edit submitted",
+  "Incorporating edits",
+  "Completed",
+  "Declined",
+] as const;
+
+export type RequestStatus = (typeof REQUEST_STATUSES)[number];
 
 export const STATUS_COLORS: Record<RequestStatus, string> = {
-  "Brief submitted": "bg-[#e91e8c] text-white",
-  "Design in progress": "bg-[#1a3a6b] text-white",
-  "Draft delivered": "bg-[#4ebce9] text-white",
-  Completed: "bg-[#0d9488] text-white",
+  "Brief submitted": "bg-pink text-white",
+  "Internal review": "bg-cobalt text-white",
+  "Design in progress": "bg-cobalt text-white",
+  "Content in progress": "bg-cobalt text-white",
+  "Draft delivered": "bg-pacific text-white",
+  "Edit submitted": "bg-purple text-white",
+  "Incorporating edits": "bg-cobalt text-white",
+  Completed: "bg-success text-white",
+  Declined: "bg-error text-white",
 };
 
 export const CATEGORIES = [

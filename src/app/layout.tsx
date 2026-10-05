@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
-  title: "Kommunicate Platform",
-  description: "Communication request management platform",
+  title: "Kommunicate",
+  description: "Communication request management for KGS Consulting",
 };
 
 export default function RootLayout({
@@ -14,7 +11,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className="bg-surface font-sans text-sm leading-5 text-text antialiased">
+        {children}
+      </body>
     </html>
   );
 }

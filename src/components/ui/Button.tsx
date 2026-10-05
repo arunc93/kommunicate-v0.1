@@ -9,10 +9,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", children, ...props }, ref) => {
     const variants = {
-      primary: "bg-[#4e5d94] hover:bg-[#3d4a7a] text-white border-transparent",
-      outline: "bg-white hover:bg-gray-50 text-[#1a2b4b] border border-gray-300",
+      primary: "bg-cobalt hover:bg-kpmg-blue text-white border-transparent",
+      outline: "bg-white hover:bg-surface text-text border border-border",
       ghost: "bg-transparent hover:bg-white/10 text-white border-transparent",
-      sidebar: "bg-[#1e3a5f] hover:bg-[#2d4a6f] text-white border-transparent w-full justify-start",
+      sidebar: "bg-white/10 hover:bg-white/15 text-white border-transparent w-full justify-start",
     };
     const sizes = {
       sm: "px-3 py-1.5 text-sm",
@@ -23,7 +23,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center gap-2 rounded font-medium transition-colors border",
+          "inline-flex items-center gap-2 rounded-md font-medium transition-colors border",
           variants[variant],
           sizes[size],
           className

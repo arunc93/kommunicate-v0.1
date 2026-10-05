@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   startOfMonth,
   endOfMonth,
@@ -11,8 +12,9 @@ import {
   isSameDay,
   isToday,
 } from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { eventChipColor } from "@/features/calendar/event-color";
 
 interface CalendarEvent {
   id: string;
@@ -20,6 +22,7 @@ interface CalendarEvent {
   date: string;
   color: string;
   type: string;
+  href?: string;
 }
 
 interface CalendarGridProps {
@@ -27,7 +30,8 @@ interface CalendarGridProps {
   events: CalendarEvent[];
   onPrevMonth: () => void;
   onNextMonth: () => void;
-  legend?: { label: string; type: string }[];
+  releaseHref?: string;
+  deliveryHref?: string;
   highlightToday?: boolean;
 }
 
@@ -36,7 +40,8 @@ export function CalendarGrid({
   events,
   onPrevMonth,
   onNextMonth,
-  legend,
+  releaseHref,
+  deliveryHref,
   highlightToday = true,
 }: CalendarGridProps) {
   const monthStart = startOfMonth(currentDate);
@@ -45,38 +50,56 @@ export function CalendarGrid({
   const calEnd = endOfWeek(monthEnd);
   const days = eachDayOfInterval({ start: calStart, end: calEnd });
 
-  const getEventsForDay = (day: Date) =>
-    events.filter((e) => isSameDay(new Date(e.date), day));
+  const getEventsForDay = (day: Date) => events.filter((event) => isSameDay(new Date(event.date), day));
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      <div className="bg-[#0a192f] text-white px-6 py-3 flex items-center justify-between">
-        <button onClick={onPrevMonth} className="hover:opacity-80 transition-opacity">
+    <div className="overflow-hidden rounded-md border border-border bg-white shadow-elevation-1">
+      <div className="flex items-center justify-between gap-2 bg-navy px-4 py-3 text-white">
+        <button
+          type="button"
+          onClick={onPrevMonth}
+          aria-label="Previous month"
+          className="rounded-md p-1 hover:bg-white/10"
+        >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <div className="flex items-center gap-6">
-          <span className="font-semibold text-lg">
-            {format(currentDate, "MMMM yyyy")}
-          </span>
-          {legend && (
-            <div className="flex gap-4 text-sm">
-              {legend.map((l) => (
-                <span key={l.type} className="flex items-center gap-1.5 text-[#4ebce9]">
-                  <span className="text-xs">📅</span> {l.label}
-                </span>
-              ))}
-            </div>
-          )}
+        <div className="flex flex-1 flex-wrap items-center justify-center gap-4 md:gap-8">
+          {(deliveryHref || releaseHref) &&
+            (deliveryHref ? (
+              <Link href={deliveryHref} className="flex items-center gap-1.5 text-sm text-light-blue hover:underline">
+                <Calendar className="h-4 w-4" /> Delivery
+              </Link>
+            ) : (
+              <span className="flex items-center gap-1.5 text-sm text-light-blue">
+                <Calendar className="h-4 w-4" /> Delivery
+              </span>
+            ))}
+          <span className="text-lg font-semibold">{format(currentDate, "MMMM yyyy")}</span>
+          {(deliveryHref || releaseHref) &&
+            (releaseHref ? (
+              <Link href={releaseHref} className="flex items-center gap-1.5 text-sm text-light-blue hover:underline">
+                <Calendar className="h-4 w-4" /> Release
+              </Link>
+            ) : (
+              <span className="flex items-center gap-1.5 text-sm text-light-blue">
+                <Calendar className="h-4 w-4" /> Release
+              </span>
+            ))}
         </div>
-        <button onClick={onNextMonth} className="hover:opacity-80 transition-opacity">
+        <button
+          type="button"
+          onClick={onNextMonth}
+          aria-label="Next month"
+          className="rounded-md p-1 hover:bg-white/10"
+        >
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 bg-gray-100 border-b border-gray-200">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-          <div key={d} className="py-2 text-center text-sm font-semibold text-[#1a2b4b]">
-            {d}
+      <div className="grid grid-cols-7 border-b border-border bg-surface">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <div key={day} className="py-2 text-center text-sm font-semibold text-text">
+            {day}
           </div>
         ))}
       </div>
@@ -91,33 +114,33 @@ export function CalendarGrid({
             <div
               key={day.toISOString()}
               className={cn(
-                "min-h-[100px] border border-gray-100 p-1.5",
-                !inMonth && "bg-gray-50",
-                today && "ring-2 ring-[#4ebce9] ring-inset bg-blue-50/30"
+                "min-h-[100px] border border-border p-1.5",
+                !inMonth && "bg-surface",
+                today && "bg-light-blue/40 ring-1 ring-inset ring-cobalt",
               )}
             >
-              <span
-                className={cn(
-                  "text-xs font-medium",
-                  inMonth ? "text-[#1a2b4b]" : "text-gray-300"
-                )}
-              >
+              <span className={cn("text-xs font-medium", inMonth ? "text-text" : "text-text-muted")}>
                 {format(day, "d")}
               </span>
               <div className="mt-1 space-y-0.5">
-                {dayEvents.slice(0, 3).map((event) => (
-                  <div
-                    key={event.id}
-                    className="text-[10px] text-white px-1.5 py-0.5 rounded truncate"
-                    style={{ backgroundColor: event.color }}
-                    title={event.title}
-                  >
-                    {event.title}
-                  </div>
-                ))}
-                {dayEvents.length > 3 && (
-                  <div className="text-[10px] text-gray-400 text-center">▼</div>
-                )}
+                {dayEvents.map((event) => {
+                  const chip = (
+                    <div
+                      className="truncate rounded-sm px-1.5 py-0.5 text-[10px] leading-4 text-white"
+                      style={{ backgroundColor: eventChipColor(event.color) }}
+                      title={event.title}
+                    >
+                      {event.title}
+                    </div>
+                  );
+                  return event.href ? (
+                    <Link key={event.id} href={event.href} className="block">
+                      {chip}
+                    </Link>
+                  ) : (
+                    <div key={event.id}>{chip}</div>
+                  );
+                })}
               </div>
             </div>
           );

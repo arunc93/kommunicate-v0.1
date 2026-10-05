@@ -36,6 +36,7 @@ model Request {
   targetReleaseDate       DateTime?
   deadline                DateTime?
   status                  String       @default("Brief submitted")
+  declineReason           String?
   iterations              Int          @default(0)
   requestedBy             String
   description             String?
@@ -44,6 +45,16 @@ model Request {
   userId                  String?
   user                    User?        @relation(fields: [userId], references: [id])
   hourEntries             HourEntry[]
+  attachments             Attachment[]
+}
+
+model Attachment {
+  id          String   @id @default(cuid())
+  requestId   String
+  request     Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  filename    String
+  storedPath  String
+  createdAt   DateTime @default(now())
 }
 
 model HourEntry {
@@ -75,10 +86,22 @@ model CalendarEvent {
 }
 
 model GalleryProject {
-  id       String @id @default(cuid())
-  title    String
-  imageUrl String
-  order    Int    @default(0)
+  id        String  @id @default(cuid())
+  title     String
+  imageUrl  String
+  imagePath String?
+  pdfPath   String?
+  pdfName   String?
+  order     Int     @default(0)
+}
+
+model SopResource {
+  id         String  @id @default(cuid())
+  title      String
+  storedPath String?
+  filename   String?
+  order      Int     @default(0)
+  builtin    Boolean @default(false)
 }
 
 model GalleryCategory {

@@ -1,82 +1,230 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import {
+  BarChart3,
+  Calendar,
+  CalendarClock,
+  FileText,
+  Files,
+  Image as ImageIcon,
+  List,
+  LogOut,
+  Menu,
   Plus,
   Search,
-  List,
-  Calendar,
-  BarChart3,
-  Camera,
-  FileText,
   Users,
-  Menu,
+  type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import {
+  NAV_ITEMS,
+  PREVIEW_AVATARS,
+  PREVIEW_PEOPLE,
+  ROLES,
+  type AppRole,
+  type NavIcon,
+  type PreviewPerson,
+  givenName,
+  homeForRole,
+  parsePerson,
+} from "@/features/auth/access";
+import { clearStubSession, writeStubPerson, writeStubRole } from "@/features/auth/stub-session";
 
-const navItems = [
-  { href: "/dashboard/new-request", label: "New request", icon: Plus, prefix: "+" },
-  { href: "/dashboard/track-request", label: "Track request", icon: Search },
-  { href: "/dashboard/templates", label: "Templates", icon: List },
-  { href: "/dashboard/delivery-calendar", label: "Delivery calendar", icon: Calendar },
-  { href: "/dashboard/metrics", label: "Metrics", icon: BarChart3 },
-  { href: "/dashboard/gallery", label: "Gallery", icon: Camera },
-  { href: "/dashboard/sops", label: "SOPs and TATs", icon: FileText },
-  { href: "/dashboard/team", label: "Our team", icon: Users },
-];
+const ICONS: Record<NavIcon, LucideIcon> = {
+  dashboard: Search,
+  "new-request": Plus,
+  "my-requests": List,
+  templates: Files,
+  delivery: Calendar,
+  release: CalendarClock,
+  metrics: BarChart3,
+  gallery: ImageIcon,
+  sops: FileText,
+  team: Users,
+};
 
-export function Sidebar() {
+const STORAGE_KEY = "km_sidebar_collapsed";
+
+export function Sidebar({
+  role,
+  person,
+  stub,
+}: {
+  role: AppRole;
+  person: string;
+  stub: boolean;
+}) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [collapsed, setCollapsed] = useState(false);
+  const items = NAV_ITEMS.filter((item) => item.roles.includes(role));
+  const previewPerson = parsePerson(person);
+
+  useEffect(() => {
+    setCollapsed(window.localStorage.getItem(STORAGE_KEY) === "1");
+  }, []);
+
+  const toggle = () => {
+    setCollapsed((current) => {
+      const next = !current;
+      window.localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
+      return next;
+    });
+  };
+
+  const switchRole = (next: AppRole) => {
+    writeStubRole(next);
+    router.push(homeForRole(next));
+    router.refresh();
+  };
+
+  const switchPerson = (next: PreviewPerson) => {
+    writeStubPerson(next);
+    router.refresh();
+  };
+
+  const signOut = () => {
+    clearStubSession();
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
-    <aside className="w-[200px] min-h-screen bg-[#0a192f] flex flex-col shrink-0">
-      <div className="p-4">
-        <button className="text-white/80 hover:text-white transition-colors">
+    <aside
+      className={cn(
+        "flex w-full shrink-0 flex-row items-center bg-sidebar text-white md:min-h-screen md:flex-col md:items-stretch",
+        collapsed ? "md:w-[72px]" : "md:w-60",
+      )}
+    >
+      <div className={cn("flex shrink-0 items-center gap-2 px-3 py-3 md:py-4", collapsed && "md:flex-col md:px-2")}>
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={collapsed ? "Expand sidebar" : "Retract sidebar"}
+          className="rounded-md p-2 hover:bg-white/10"
+        >
           <Menu className="h-5 w-5" />
         </button>
+        <Link href="/login" title="Kommunicate" className="min-w-0 text-white">
+          {collapsed ? (
+            <span className="flex h-8 w-8 items-center justify-center rounded-md border border-white/30 text-sm font-semibold">
+              K
+            </span>
+          ) : (
+            <span className="block">
+              <span className="block text-base font-semibold leading-5">Kommunicate</span>
+              <span className="block text-xs leading-4 text-white/70">KGS Consulting</span>
+            </span>
+          )}
+        </Link>
       </div>
 
-      <div className="flex flex-col items-center px-4 mb-6">
-        <div className="relative w-16 h-16 rounded-full overflow-hidden mb-2 border-2 border-white/20">
+      <div
+        className={cn(
+          "flex shrink-0 items-center gap-2 px-3 py-1 md:flex-col md:gap-2 md:px-3 md:pb-4 md:pt-1",
+          collapsed && "md:px-2",
+        )}
+      >
+        <div
+          className={cn(
+            "relative overflow-hidden rounded-full",
+            collapsed ? "h-10 w-10" : "h-10 w-10 md:h-20 md:w-20",
+          )}
+          title={previewPerson}
+        >
           <Image
-            src="https://i.pravatar.cc/150?u=sam"
-            alt="Sam"
+            src={PREVIEW_AVATARS[previewPerson]}
+            alt=""
             fill
+            sizes="80px"
             className="object-cover"
           />
         </div>
-        <span className="text-white text-sm font-medium">Sam</span>
+        <p className={cn("truncate text-sm text-white md:text-center", collapsed && "sr-only")}>
+          {givenName(previewPerson)}
+        </p>
       </div>
 
-      <nav className="flex flex-col gap-1.5 px-3 pb-6">
-        {navItems.map((item) => {
-          const isActive =
+      <nav className="flex min-w-0 flex-1 gap-1 overflow-x-auto px-2 py-3 md:flex-none md:flex-col md:overflow-visible md:px-3 md:py-0 md:pb-6">
+        {items.map((item) => {
+          const Icon = ICONS[item.icon];
+          const active =
             pathname === item.href ||
-            (item.href !== "/dashboard/new-request" && pathname.startsWith(item.href));
-          const Icon = item.icon;
+            (item.href === "/delivery-calendar" && pathname === "/release-calendar");
           return (
             <Link
               key={item.href}
               href={item.href}
+              title={item.label}
+              aria-current={active ? "page" : undefined}
               className={cn(
-                "flex items-center gap-2.5 px-3 py-2.5 rounded text-sm text-white transition-colors",
-                isActive
-                  ? "bg-[#2d4a6f]"
-                  : "bg-[#1e3a5f]/60 hover:bg-[#2d4a6f]/80"
+                "flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm leading-5 text-white",
+                active ? "bg-cobalt" : "hover:bg-white/10",
+                collapsed && "justify-center px-2 md:px-2",
               )}
             >
-              {item.prefix ? (
-                <span className="text-base font-light">{item.prefix}</span>
-              ) : (
-                <Icon className="h-4 w-4 shrink-0" />
-              )}
-              <span className="leading-tight">{item.label}</span>
+              <Icon className="h-4 w-4 shrink-0" />
+              <span className={cn(collapsed && "sr-only")}>{item.label}</span>
             </Link>
           );
         })}
       </nav>
+
+      <div className="flex shrink-0 items-center gap-2 px-2 py-3 md:mt-auto md:flex-col md:items-stretch md:border-t md:border-white/10 md:px-3 md:py-4">
+        {stub && !collapsed && (
+          <div className="hidden flex-col gap-3 md:flex">
+            <p className="px-1 text-xs leading-4 text-white/70">
+              Preview session. Supabase is not configured.
+            </p>
+            <label className="flex flex-col gap-1 px-1 text-xs leading-4 text-white/80" htmlFor="sidebar-role">
+              Preview role
+              <select
+                id="sidebar-role"
+                value={role}
+                onChange={(event) => switchRole(event.target.value as AppRole)}
+                className="rounded-md border border-white/20 bg-sidebar px-2 py-2 text-sm text-white outline-none"
+              >
+                {ROLES.map((value) => (
+                  <option key={value} value={value}>
+                    {value === "comms" ? "Comms" : value[0].toUpperCase() + value.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 px-1 text-xs leading-4 text-white/80" htmlFor="sidebar-person">
+              Preview person
+              <select
+                id="sidebar-person"
+                value={previewPerson}
+                onChange={(event) => switchPerson(event.target.value as PreviewPerson)}
+                className="rounded-md border border-white/20 bg-sidebar px-2 py-2 text-sm text-white outline-none"
+              >
+                {PREVIEW_PEOPLE.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={signOut}
+          title="Sign out"
+          className={cn(
+            "flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-white hover:bg-white/10",
+            collapsed && "justify-center px-2",
+          )}
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          <span className={cn(collapsed && "sr-only")}>Sign out</span>
+        </button>
+      </div>
     </aside>
   );
 }

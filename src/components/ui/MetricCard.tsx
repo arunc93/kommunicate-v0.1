@@ -6,7 +6,7 @@ interface MetricCardProps {
 
 export function MetricCard({ title, value, subtext }: MetricCardProps) {
   return (
-    <div className="bg-[#00aeef] rounded-lg p-6 flex flex-col justify-between min-h-[140px]">
+    <div className="flex min-h-[140px] flex-col justify-between rounded-md bg-cobalt p-6 text-white shadow-elevation-1">
       <p className="text-white text-sm font-medium">{title}</p>
       <div>
         <p className="text-white text-4xl font-bold">{value}</p>

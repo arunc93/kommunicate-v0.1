@@ -5,21 +5,27 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const requestId = searchParams.get("requestId");
   const projectNumber = searchParams.get("projectNumber");
+  const person = searchParams.get("person");
 
-  let where: { requestId?: string } = {};
+  const where: { requestId?: string; effortSpentBy?: string } = {};
+  if (person) where.effortSpentBy = person;
+
   if (requestId) {
-    where = { requestId };
+    where.requestId = requestId;
   } else if (projectNumber) {
     const req = await prisma.request.findUnique({
       where: { projectNumber: parseInt(projectNumber) },
     });
-    if (req) where = { requestId: req.id };
+    if (!req) return NextResponse.json([]);
+    where.requestId = req.id;
   }
 
   const hours = await prisma.hourEntry.findMany({
     where,
     orderBy: { date: "desc" },
-    include: { request: true },
+    include: {
+      request: { select: { projectNumber: true, projectName: true } },
+    },
   });
 
   return NextResponse.json(hours);

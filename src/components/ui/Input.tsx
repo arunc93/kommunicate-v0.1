@@ -12,17 +12,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col gap-1">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-[#1a2b4b]">
+          <label htmlFor={inputId} className="text-sm font-medium text-text">
             {label}
-            {required && <span className="text-red-500 ml-0.5">*</span>}
+            {required && <span className="ml-0.5 text-error">*</span>}
           </label>
         )}
         <input
           ref={ref}
           id={inputId}
           className={cn(
-            "w-full rounded border border-gray-200 bg-[#f5f5f5] px-3 py-2 text-sm text-[#1a2b4b] outline-none focus:border-[#4ebce9] focus:ring-1 focus:ring-[#4ebce9]",
-            props.readOnly && "bg-[#ebebeb] cursor-default",
+            "w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text outline-none focus:border-cobalt focus:ring-1 focus:ring-cobalt",
+            props.readOnly && "cursor-default bg-white",
             className
           )}
           {...props}
