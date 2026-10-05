@@ -67,7 +67,7 @@ export function LoginForm({ supabaseConfigured }: { supabaseConfigured: boolean 
                     <button
                       key={option.value}
                       type="button"
-                      className={cn("choice justify-center", selected && "on")}
+                      className={cn("choice justify-start text-left", selected && "on")}
                       aria-pressed={selected}
                       onClick={() => setRole(option.value)}
                     >
