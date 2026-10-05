@@ -116,7 +116,7 @@ function AddHoursContent() {
 
   return (
     <div>
-      <PageHeader title="Add hours">
+      <PageHeader eyebrow="Effort" title="Add hours" description="Log time against a project.">
         {projectNumber ? (
           <Link href={`/hours/project?project=${encodeURIComponent(projectNumber)}`}>
             <Button type="button" variant="outline" size="sm">
@@ -142,7 +142,7 @@ function AddHoursContent() {
         <p className="text-sm text-text-muted">Open Add hours from a request form.</p>
       ) : (
         <>
-          <div className="mb-6 space-y-4 rounded-md border border-border bg-white p-4 shadow-elevation-1 md:p-6">
+          <div className="panel mb-6 space-y-4 p-4 md:p-6">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <Input label="Project number" value={projectNumber} readOnly />
               <Input label="Project name" value={projectName} readOnly />
@@ -211,26 +211,26 @@ function AddHoursContent() {
             </div>
           </div>
 
-          <div id="hour-log" className="overflow-hidden rounded-md border border-border bg-white shadow-elevation-1">
+          <div id="hour-log" className="panel overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="data-table">
                 <thead>
-                  <tr className="border-b border-border bg-surface">
-                    <th className="px-4 py-3 text-left font-semibold text-text">Date</th>
-                    <th className="px-4 py-3 text-left font-semibold text-text">Category</th>
-                    <th className="px-4 py-3 text-left font-semibold text-text">Sub-category</th>
-                    <th className="px-4 py-3 text-left font-semibold text-text">Hours</th>
-                    <th className="px-4 py-3 text-left font-semibold text-text">Remarks</th>
+                  <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Sub-category</th>
+                    <th>Hours</th>
+                    <th>Remarks</th>
                   </tr>
                 </thead>
                 <tbody>
                   {entries.map((entry) => (
-                    <tr key={entry.id} className="border-b border-border last:border-b-0">
-                      <td className="px-4 py-3 text-text">{formatDate(entry.date)}</td>
-                      <td className="px-4 py-3 text-text">{entry.category}</td>
-                      <td className="px-4 py-3 text-text">{entry.subCategory}</td>
-                      <td className="px-4 py-3 text-text">{entry.hours}</td>
-                      <td className="px-4 py-3 text-text-muted">{entry.remarks}</td>
+                    <tr key={entry.id}>
+                      <td className="text-text">{formatDate(entry.date)}</td>
+                      <td className="text-text">{entry.category}</td>
+                      <td className="text-text">{entry.subCategory}</td>
+                      <td className="text-text">{entry.hours}</td>
+                      <td>{entry.remarks}</td>
                     </tr>
                   ))}
                 </tbody>

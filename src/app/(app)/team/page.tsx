@@ -94,7 +94,7 @@ export default function TeamPage() {
 
   return (
     <div>
-      <PageHeader title="Our team">
+      <PageHeader eyebrow="People" title="Our team" description="Meet our team.">
         {canEdit && (
           <Button type="button" variant="outline" onClick={openAdd}>
             <UserPlus className="h-4 w-4" /> Add admin
@@ -103,7 +103,7 @@ export default function TeamPage() {
       </PageHeader>
 
       {(adding || editingId) && canEdit && (
-        <div className="mb-6 grid grid-cols-1 gap-4 rounded-md border border-border bg-white p-4 shadow-elevation-1 md:grid-cols-4">
+        <div className="panel mb-6 grid grid-cols-1 gap-4 p-4 md:grid-cols-4">
           <Input
             label="Name"
             required
@@ -137,14 +137,25 @@ export default function TeamPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div className="flex flex-col gap-2.5">
         {members.map((member) => (
-          <div
-            key={member.id}
-            className="relative flex gap-4 rounded-md border border-border bg-white p-5 shadow-elevation-1"
-          >
+          <div key={member.id} className="panel flex flex-wrap items-center gap-3.5 p-4">
+            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
+              <Image
+                src={member.avatar || `https://i.pravatar.cc/150?u=${encodeURIComponent(member.email)}`}
+                alt=""
+                fill
+                sizes="40px"
+                className="object-cover"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <b className="block truncate text-text">{member.name}</b>
+              <p className="truncate text-[13px] text-text-muted">{member.email}</p>
+            </div>
+            <span className="chip">{member.role}</span>
             {canEdit && (
-              <div className="absolute right-4 top-4 flex gap-2 text-text-muted">
+              <div className="flex shrink-0 gap-2 text-text-muted">
                 <button type="button" aria-label={`Edit ${member.name}`} onClick={() => openEdit(member)}>
                   <Pencil className="h-4 w-4 hover:text-text" />
                 </button>
@@ -153,22 +164,6 @@ export default function TeamPage() {
                 </button>
               </div>
             )}
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md">
-              <Image
-                src={member.avatar || `https://i.pravatar.cc/150?u=${encodeURIComponent(member.email)}`}
-                alt={member.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="flex min-w-0 flex-col justify-center pr-10">
-              <p className="font-semibold text-text">{member.name}</p>
-              <p className="mt-0.5 truncate text-xs text-text-muted">{member.email}</p>
-              <div className="mt-2 flex items-center gap-2">
-                <div className="h-4 w-0.5 bg-pacific" />
-                <p className="text-sm text-text">{member.role}</p>
-              </div>
-            </div>
           </div>
         ))}
       </div>

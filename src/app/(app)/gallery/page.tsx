@@ -105,7 +105,11 @@ export default function GalleryPage() {
 
   return (
     <div>
-      <PageHeader title="Gallery">
+      <PageHeader
+        eyebrow="Work"
+        title="Gallery"
+        description="Recent projects and category shelves."
+      >
         {canEdit && (
           <Button
             type="button"
@@ -120,12 +124,12 @@ export default function GalleryPage() {
         )}
       </PageHeader>
 
-      <div className="rounded-md border border-border bg-white p-4 shadow-elevation-1 md:p-6">
+      <div className="panel p-4 md:p-6">
         {showEdit && (
           <div key={formKey} className="mb-6 grid grid-cols-1 gap-4 border-b border-border pb-6 md:grid-cols-2 xl:grid-cols-4">
             <Input label="Name" required value={title} onChange={(event) => setTitle(event.target.value)} />
             <div className="flex flex-col gap-1">
-              <label htmlFor="gallery-thumbnail" className="text-sm font-medium text-text">
+              <label htmlFor="gallery-thumbnail" className="field-label">
                 Image thumbnail<span className="ml-0.5 text-error">*</span>
               </label>
               <input
@@ -133,12 +137,12 @@ export default function GalleryPage() {
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
-                className="text-sm text-text file:mr-3 file:rounded-md file:border-0 file:bg-cobalt file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white"
+                className="text-sm text-text file:mr-3 file:rounded-lg file:border-0 file:bg-cobalt file:px-3 file:py-1.5 file:text-[13px] file:font-bold file:text-white"
               />
               {imageFile ? <span className="text-xs text-text-muted">{imageFile.name}</span> : null}
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="gallery-pdf" className="text-sm font-medium text-text">
+              <label htmlFor="gallery-pdf" className="field-label">
                 PDF attachment<span className="ml-0.5 text-error">*</span>
               </label>
               <input
@@ -146,7 +150,7 @@ export default function GalleryPage() {
                 type="file"
                 accept="application/pdf,.pdf"
                 onChange={(event) => setPdfFile(event.target.files?.[0] ?? null)}
-                className="text-sm text-text file:mr-3 file:rounded-md file:border-0 file:bg-cobalt file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white"
+                className="text-sm text-text file:mr-3 file:rounded-lg file:border-0 file:bg-cobalt file:px-3 file:py-1.5 file:text-[13px] file:font-bold file:text-white"
               />
               {pdfFile ? <span className="text-xs text-text-muted">{pdfFile.name}</span> : null}
             </div>
@@ -193,7 +197,7 @@ export default function GalleryPage() {
                     )}
                   </>
                 );
-                const className = "relative block aspect-square overflow-hidden rounded-md";
+                const className = "relative block aspect-square overflow-hidden rounded-[14px]";
                 if (!showEdit && project.hasPdf) {
                   return (
                     <a key={project.id} href={`/api/gallery/${project.id}/pdf`} className={className} aria-label={`Download ${project.title}`}>
@@ -220,7 +224,7 @@ export default function GalleryPage() {
                 <div
                   key={category.id}
                   className={cn(
-                    "relative flex min-h-[100px] items-center justify-center rounded-md p-6",
+                    "relative flex min-h-[120px] items-end rounded-[14px] p-3.5",
                     CATEGORY_STYLE[category.title] ?? "bg-kpmg-blue",
                   )}
                 >
@@ -229,7 +233,14 @@ export default function GalleryPage() {
                       PPT
                     </span>
                   )}
-                  <p className="text-center text-lg font-semibold leading-6 text-white">{category.title}</p>
+                  <p
+                    className={cn(
+                      "text-sm font-bold leading-5",
+                      category.title === "Guidelines" ? "text-text" : "text-white",
+                    )}
+                  >
+                    {category.title}
+                  </p>
                 </div>
               ))}
             </div>

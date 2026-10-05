@@ -10,9 +10,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, label, required, id, ...props }, ref) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, "-");
     return (
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-text">
+          <label htmlFor={inputId} className="field-label">
             {label}
             {required && <span className="ml-0.5 text-error">*</span>}
           </label>
@@ -20,10 +20,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           id={inputId}
-          className={cn(
-            "min-h-[80px] w-full resize-none rounded-md border border-border bg-surface px-3 py-2 text-sm text-text outline-none focus:border-cobalt focus:ring-1 focus:ring-cobalt",
-            className
-          )}
+          className={cn("field min-h-[88px] resize-y", className)}
           {...props}
         />
       </div>

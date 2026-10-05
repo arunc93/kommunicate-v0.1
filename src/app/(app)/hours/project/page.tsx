@@ -23,7 +23,11 @@ function ProjectHoursContent() {
 
   return (
     <div>
-      <PageHeader title={project ? `Hours for ${project}` : "Project hours"} />
+      <PageHeader
+        eyebrow="Effort"
+        title={project ? `Hours for ${project}` : "Project hours"}
+        description="Hours for this project."
+      />
       {!project ? (
         <p className="text-sm text-text-muted">Open View hours from Add hours.</p>
       ) : loaded ? (

@@ -97,9 +97,13 @@ export function NewRequestForm({ projectNumber }: { projectNumber: number }) {
 
   return (
     <div>
-      <PageHeader title="Create new request" />
+      <PageHeader
+        eyebrow="Request"
+        title="Create new request"
+        description="Create a fresh request."
+      />
 
-      <div className="space-y-5 rounded-md border border-border bg-white p-4 shadow-elevation-1 md:p-6">
+      <div className="panel space-y-5 p-4 md:p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Input
             label="Project name"

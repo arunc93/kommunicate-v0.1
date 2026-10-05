@@ -22,8 +22,8 @@ export function AttachmentsField({
 
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-sm font-medium text-text">Attachments</label>
-      <div className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-muted">
+      <label className="field-label">Attachments</label>
+      <div className="rounded-lg border border-border bg-table-head px-3 py-2.5 text-sm text-text-muted">
         {hasFiles ? (
           <span className="mb-1 flex flex-col gap-1 text-text">
             {saved.map((file) => (

@@ -41,19 +41,27 @@ export default function MetricsPage() {
 
   return (
     <div>
-      <PageHeader title="Metrics" />
+      <PageHeader
+        eyebrow="Desk"
+        title="Metrics"
+        description="Volume, effort, and adherence for the selected month."
+      />
 
-      <div className="mb-6 flex flex-wrap items-center gap-4 rounded-md border border-border bg-white p-4 shadow-elevation-1">
-        <Select
-          options={YEARS.map((y) => ({ value: y, label: y }))}
-          value={year}
-          onChange={(e) => setYear(e.target.value)}
-        />
-        <Select
-          options={MONTHS.map((m, i) => ({ value: String(i), label: m }))}
-          value={month}
-          onChange={(e) => setMonth(e.target.value)}
-        />
+      <div className="panel mb-6 flex flex-wrap items-center gap-4 p-3">
+        <div className="w-32 shrink-0">
+          <Select
+            options={YEARS.map((y) => ({ value: y, label: y }))}
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+          />
+        </div>
+        <div className="w-44 shrink-0">
+          <Select
+            options={MONTHS.map((m, i) => ({ value: String(i), label: m }))}
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+          />
+        </div>
         <div className="ml-auto">
           <Link href="/hours/personal">
             <Button type="button">

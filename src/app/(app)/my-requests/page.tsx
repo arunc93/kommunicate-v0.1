@@ -34,56 +34,66 @@ export default function MyRequestsPage() {
 
   return (
     <div>
-      <PageHeader title="My requests" />
-      <p className="mb-4 max-w-3xl text-sm leading-5 text-text-muted">
-        Supabase is not configured. This preview shows the local queue, not one person&apos;s tickets.
-      </p>
+      <PageHeader
+        eyebrow="Stakeholder"
+        title="My requests"
+        description="Requests raised for this preview. This list is the local queue, not one person's tickets."
+      />
 
       {state === "error" ? (
         <p className="text-sm text-error">Could not load requests.</p>
       ) : state === "loading" ? (
         <p className="text-sm text-text-muted">Loading...</p>
       ) : (
-        <div className="overflow-hidden rounded-md border border-border bg-white shadow-elevation-1">
-          <table className="w-full text-sm">
+        <div className="panel overflow-hidden">
+          <div className="overflow-x-auto">
+          <table className="data-table">
             <thead>
-              <tr className="border-b border-border bg-surface">
-                <th className="px-4 py-3 text-left font-semibold text-text">ID</th>
-                <th className="px-4 py-3 text-left font-semibold text-text">Project name</th>
-                <th className="px-4 py-3 text-left font-semibold text-text">Requested on</th>
-                <th className="px-4 py-3 text-left font-semibold text-text">Status</th>
+              <tr>
+                <th>ID</th>
+                <th>Project name</th>
+                <th>Requested on</th>
+                <th>Status</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {requests.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-6 text-text-muted">
+                  <td colSpan={5} className="text-text-muted">
                     No requests yet.
                   </td>
                 </tr>
               ) : (
                 requests.map((request) => (
-                  <tr key={request.id} className="border-b border-border last:border-b-0">
-                    <td className="px-4 py-3 text-text">{request.projectNumber}</td>
-                    <td className="px-4 py-3">
+                  <tr key={request.id}>
+                    <td className="font-bold text-text">{request.projectNumber}</td>
+                    <td>
                       <Link
                         href={`/requests/${request.projectNumber}`}
-                        className="text-text hover:text-cobalt hover:underline"
+                        className="font-bold text-text hover:text-cobalt"
                       >
                         {request.projectName}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-text-muted">
-                      {formatShortDate(request.requestedOn)}
-                    </td>
-                    <td className="px-4 py-3">
+                    <td>{formatShortDate(request.requestedOn)}</td>
+                    <td>
                       <StatusBadge status={request.status} />
+                    </td>
+                    <td>
+                      <Link
+                        href={`/requests/${request.projectNumber}`}
+                        className="font-bold text-cobalt hover:underline"
+                      >
+                        Open
+                      </Link>
                     </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

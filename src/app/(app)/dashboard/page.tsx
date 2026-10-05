@@ -110,11 +110,15 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <PageHeader title="Dashboard" />
+      <PageHeader
+        eyebrow="Queue"
+        title="Dashboard"
+        description="Search the shared desk, filter, and open a request."
+      />
 
       {showAdvanced ? (
-        <div className="mb-4 flex flex-wrap items-end gap-3 rounded-md border border-border bg-white p-4 shadow-elevation-1">
-          <button onClick={() => setShowAdvanced(false)} className="text-gray-500 hover:text-gray-700">
+        <div className="panel mb-4 flex flex-wrap items-end gap-3 p-4">
+          <button onClick={() => setShowAdvanced(false)} className="text-text-muted hover:text-text" aria-label="Close filters">
             <ChevronLeft className="h-5 w-5" />
           </button>
           <Input label="From" type="date" value={filters.from} onChange={(e) => setFilters({ ...filters, from: e.target.value })} />
@@ -151,8 +155,8 @@ export default function DashboardPage() {
           </Button>
         </div>
       ) : (
-        <div className="flex items-center gap-3 mb-6">
-          <div className="relative flex-1">
+        <div className="panel mb-4 flex flex-col gap-2.5 p-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="relative w-full sm:min-w-[220px] sm:flex-1">
             <input
               type="text"
               placeholder="Search using project name or number"
@@ -164,7 +168,7 @@ export default function DashboardPage() {
                   fetchRequests();
                 }
               }}
-              className="w-full rounded-md border border-border bg-white px-4 py-2 pr-8 text-sm text-text outline-none focus:border-cobalt"
+              className="field pr-8"
             />
             {search ? (
               <button
@@ -177,80 +181,70 @@ export default function DashboardPage() {
               </button>
             ) : null}
           </div>
-          <Button type="button" onClick={() => fetchRequests()}>
-            <Search className="h-4 w-4" /> Search
-          </Button>
-          <Button onClick={() => setShowAdvanced(true)}>
-            <Filter className="h-4 w-4" /> Advanced filter
-          </Button>
-          <Button type="button" variant="outline" onClick={() => downloadDashboardExport(requests, false)}>
-            <FileDown className="h-4 w-4" /> Export
-          </Button>
-          <Button variant="outline"><Trash2 className="h-4 w-4" /> Bin</Button>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" onClick={() => fetchRequests()}>
+              <Search className="h-4 w-4" /> Search
+            </Button>
+            <Button variant="outline" onClick={() => setShowAdvanced(true)}>
+              <Filter className="h-4 w-4" /> Advanced filter
+            </Button>
+            <Button type="button" variant="outline" onClick={() => downloadDashboardExport(requests, false)}>
+              <FileDown className="h-4 w-4" /> Export
+            </Button>
+            <Button variant="outline"><Trash2 className="h-4 w-4" /> Bin</Button>
+          </div>
         </div>
       )}
 
-      <div className="overflow-hidden rounded-md border border-border bg-white shadow-elevation-1">
+      <div className="panel overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="data-table">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left px-4 py-3 font-semibold text-text">ID</th>
-                <th className="text-left px-4 py-3 font-semibold text-text">Project name</th>
-                {!showAdvanced && (
-                  <th className="text-left px-4 py-3 font-semibold text-text">Description</th>
-                )}
-                <th className="text-left px-4 py-3 font-semibold text-text">Requested on</th>
-                {showAdvanced && (
-                  <th className="text-left px-4 py-3 font-semibold text-text">Requested by</th>
-                )}
-                {showAdvanced && (
-                  <th className="text-left px-4 py-3 font-semibold text-text">Deadline</th>
-                )}
-                <th className="text-left px-4 py-3 font-semibold text-text">Status</th>
-                <th className="text-left px-4 py-3 font-semibold text-text">Actions</th>
+              <tr>
+                <th>ID</th>
+                <th>Project name</th>
+                {!showAdvanced && <th>Description</th>}
+                <th>Requested on</th>
+                {showAdvanced && <th>Requested by</th>}
+                {showAdvanced && <th>Deadline</th>}
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {loaded && requests.length === 0 ? (
                 <tr>
-                  <td colSpan={showAdvanced ? 7 : 6} className="px-4 py-6 text-text-muted">
+                  <td colSpan={showAdvanced ? 7 : 6} className="text-text-muted">
                     {showAdvanced ? "No requests match these filters." : "No requests yet."}
                   </td>
                 </tr>
               ) : null}
               {requests.map((req) => (
-                <tr key={req.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                  <td className="px-4 py-3 text-text">{req.projectNumber}</td>
-                  <td className="px-4 py-3">
+                <tr key={req.id}>
+                  <td className="font-bold text-text">{req.projectNumber}</td>
+                  <td>
                     <Link
                       href={`/requests/${req.projectNumber}`}
-                      className="text-text hover:text-cobalt hover:underline"
+                      className="font-bold text-text hover:text-cobalt"
                     >
                       {req.projectName}
                     </Link>
                   </td>
                   {!showAdvanced && (
-                    <td className="px-4 py-3 text-gray-600 max-w-[200px] truncate">
+                    <td className="max-w-[200px] truncate">
                       {req.description || req.projectName}
                     </td>
                   )}
-                  <td className="px-4 py-3 text-gray-600">{formatShortDate(req.requestedOn)}</td>
-                  {showAdvanced && (
-                    <td className="px-4 py-3 text-gray-600">{req.requestedBy}</td>
-                  )}
-                  {showAdvanced && (
-                    <td className="px-4 py-3 text-gray-600">
-                      {req.deadline ? formatShortDate(req.deadline) : ""}
-                    </td>
-                  )}
-                  <td className="px-4 py-3">
+                  <td>{formatShortDate(req.requestedOn)}</td>
+                  {showAdvanced && <td>{req.requestedBy}</td>}
+                  {showAdvanced && <td>{req.deadline ? formatShortDate(req.deadline) : ""}</td>}
+                  <td>
                     <StatusBadge status={req.status} />
                   </td>
-                  <td className="px-4 py-3">
+                  <td>
                     <Link
                       href={`/requests/${req.projectNumber}`}
-                      className="text-sm text-cobalt hover:underline"
+                      className="font-bold text-cobalt hover:underline"
                     >
                       Open
                     </Link>
@@ -264,7 +258,7 @@ export default function DashboardPage() {
 
       {!showAdvanced && (
         <div className="mt-3 flex justify-end">
-          <button onClick={handleReset} className="text-gray-400 hover:text-gray-600">
+          <button onClick={handleReset} className="text-text-muted hover:text-text" aria-label="Reset">
             <RefreshCw className="h-4 w-4" />
           </button>
         </div>

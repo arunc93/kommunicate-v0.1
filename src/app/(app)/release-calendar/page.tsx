@@ -29,7 +29,11 @@ export default function ReleaseCalendarPage() {
 
   return (
     <div>
-      <PageHeader title="Release Calendar" />
+      <PageHeader
+        eyebrow="Calendar"
+        title="Release Calendar"
+        description="Month view. An entry opens the request."
+      />
       <div className="overflow-x-auto">
         <div className="min-w-[720px]">
           <CalendarGrid

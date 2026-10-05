@@ -109,7 +109,11 @@ export default function SopsPage() {
 
   return (
     <div>
-      <PageHeader title="SOPs and TATs">
+      <PageHeader
+        eyebrow="Process"
+        title="SOPs and TATs"
+        description="How a request moves, and the files the desk uses."
+      >
         {canEdit && (
           <Button
             type="button"
@@ -125,7 +129,7 @@ export default function SopsPage() {
         )}
       </PageHeader>
 
-      <div className="sop-banner mb-8 rounded-lg p-6 md:p-8">
+      <div className="sop-banner mb-4 rounded-panel p-6 md:p-8">
         <div className="mb-8 text-center">
           <span className="inline-block rounded-md bg-white/20 px-4 py-1 text-sm text-white">Ready to Kommunicate?</span>
         </div>
@@ -146,17 +150,17 @@ export default function SopsPage() {
       </div>
 
       {showEdit && (
-        <div key={formKey} className="mb-6 grid grid-cols-1 gap-4 rounded-md border border-border bg-white p-4 shadow-elevation-1 md:grid-cols-3">
+        <div key={formKey} className="panel mb-6 grid grid-cols-1 gap-4 p-4 md:grid-cols-3">
           <Input label="Name" required value={title} onChange={(event) => setTitle(event.target.value)} />
           <div className="flex flex-col gap-1">
-            <label htmlFor="sop-file" className="text-sm font-medium text-text">
+            <label htmlFor="sop-file" className="field-label">
               Attachment<span className="ml-0.5 text-error">*</span>
             </label>
             <input
               id="sop-file"
               type="file"
               onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-              className="text-sm text-text file:mr-3 file:rounded-md file:border-0 file:bg-cobalt file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white"
+              className="text-sm text-text file:mr-3 file:rounded-lg file:border-0 file:bg-cobalt file:px-3 file:py-1.5 file:text-[13px] file:font-bold file:text-white"
             />
             {file ? <span className="text-xs text-text-muted">{file.name}</span> : null}
           </div>
@@ -174,7 +178,7 @@ export default function SopsPage() {
         {resources.map((resource) => (
           <div
             key={resource.id}
-            className="flex min-h-[140px] flex-col justify-between rounded-md border border-border bg-white p-6 shadow-elevation-1"
+            className="panel flex min-h-[140px] flex-col justify-between p-6"
           >
             <div className="flex items-start justify-between gap-3">
               <p className="text-sm leading-5 text-text">{resource.title}</p>

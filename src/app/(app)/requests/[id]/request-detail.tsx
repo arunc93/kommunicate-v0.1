@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatShortDate } from "@/lib/utils";
 import { CATEGORIES, GEO_OPTIONS, REQUEST_STATUSES, TEAMS } from "@/lib/types";
 import { useAppRole } from "@/features/auth/role-context";
 import { missingRequestLabels } from "@/features/requests/required-fields";
@@ -136,6 +136,7 @@ export function RequestDetail({ requestKey: requestKeyFromServer }: { requestKey
 
   const canSetStatus = role === "comms" || role === "lead";
   const editing = canSetStatus || request.status === "Brief submitted";
+  const dueValue = request.deadline || request.targetReleaseDate;
 
   const setText = (field: TextField, value: string) => {
     setRequest((current) => (current ? { ...current, [field]: value } : current));
@@ -245,9 +246,18 @@ export function RequestDetail({ requestKey: requestKeyFromServer }: { requestKey
 
   return (
     <div>
-      <PageHeader title={`${request.projectNumber} - ${request.projectName}`} />
+      <PageHeader
+        eyebrow={`Request ${request.projectNumber}`}
+        title={request.projectName.trim() || String(request.projectNumber)}
+        description="Read and update this request."
+      />
 
-      <div className="space-y-5 rounded-md border border-border bg-white p-4 shadow-elevation-1 md:p-6">
+      <div className="-mt-2 mb-4 flex flex-wrap items-center gap-2">
+        <StatusBadge status={request.status} />
+        {dueValue ? <span className="chip">Due {formatShortDate(dueValue)}</span> : null}
+      </div>
+
+      <div className="panel space-y-5 p-4 md:p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Input
             label="Project name"
@@ -380,8 +390,8 @@ export function RequestDetail({ requestKey: requestKeyFromServer }: { requestKey
             <AttachmentsField pending={files} saved={request.attachments} onPick={addFiles} />
           ) : (
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-text">Attachments</label>
-              <div className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-muted">
+              <label className="field-label">Attachments</label>
+              <div className="rounded-lg border border-border bg-table-head px-3 py-2.5 text-sm text-text-muted">
                 {request.attachments && request.attachments.length > 0 ? (
                   <span className="flex flex-col gap-1">
                     {request.attachments.map((file) => (
@@ -414,8 +424,8 @@ export function RequestDetail({ requestKey: requestKeyFromServer }: { requestKey
             />
           ) : (
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-text">Status</label>
-              <div className="rounded-md border border-border bg-surface px-3 py-2">
+              <label className="field-label">Status</label>
+              <div className="rounded-lg border border-border bg-table-head px-3 py-2.5">
                 <StatusBadge status={request.status} />
               </div>
             </div>
@@ -447,8 +457,8 @@ export function RequestDetail({ requestKey: requestKeyFromServer }: { requestKey
           ) : null}
           {!canSetStatus && request.status === "Declined" && request.declineReason ? (
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-text">Reason for decline</label>
-              <p className="rounded-md border border-border bg-surface px-3 py-2 text-sm leading-5 text-text">
+              <label className="field-label">Reason for decline</label>
+              <p className="rounded-lg border border-border bg-table-head px-3 py-2.5 text-sm leading-5 text-text">
                 {request.declineReason}
               </p>
             </div>

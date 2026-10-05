@@ -13,15 +13,15 @@ export const REQUEST_STATUSES = [
 export type RequestStatus = (typeof REQUEST_STATUSES)[number];
 
 export const STATUS_COLORS: Record<RequestStatus, string> = {
-  "Brief submitted": "bg-pink text-white",
-  "Internal review": "bg-cobalt text-white",
-  "Design in progress": "bg-cobalt text-white",
-  "Content in progress": "bg-cobalt text-white",
-  "Draft delivered": "bg-pacific text-white",
-  "Edit submitted": "bg-purple text-white",
-  "Incorporating edits": "bg-cobalt text-white",
-  Completed: "bg-success text-white",
-  Declined: "bg-error text-white",
+  "Brief submitted": "bg-pink/10 text-pink",
+  "Internal review": "bg-cobalt/10 text-cobalt",
+  "Design in progress": "bg-cobalt/10 text-cobalt",
+  "Content in progress": "bg-cobalt/10 text-cobalt",
+  "Draft delivered": "bg-pacific/15 text-kpmg-blue",
+  "Edit submitted": "bg-purple/10 text-purple",
+  "Incorporating edits": "bg-cobalt/10 text-cobalt",
+  Completed: "bg-success/10 text-success",
+  Declined: "bg-error/10 text-error",
 };
 
 export const CATEGORIES = [

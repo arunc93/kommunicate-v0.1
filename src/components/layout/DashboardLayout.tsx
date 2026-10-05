@@ -14,13 +14,17 @@ export function DashboardLayout({
   stub: boolean;
 }) {
   return (
-    <div className="flex min-h-screen flex-col bg-surface md:flex-row">
+    <div className="flex h-dvh flex-col overflow-hidden bg-surface md:flex-row">
       <Sidebar role={role} person={person} stub={stub} />
-      <main className="min-w-0 flex-1 overflow-auto p-4 md:p-8">
-        <RoleProvider role={role} person={person}>
-          {children}
-        </RoleProvider>
-      </main>
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <main className="min-h-0 min-w-0 flex-1 overflow-auto">
+          <div className="mx-auto w-full max-w-[1180px] px-4 py-7 md:px-8 md:pb-12">
+            <RoleProvider role={role} person={person}>
+              {children}
+            </RoleProvider>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

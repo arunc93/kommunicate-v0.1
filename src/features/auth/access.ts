@@ -20,6 +20,11 @@ export function givenName(name: string): string {
   return name.slice(comma + 1).trim() || name;
 }
 
+export function roleLabel(role: AppRole): string {
+  if (role === "comms") return "Comms";
+  return role[0].toUpperCase() + role.slice(1);
+}
+
 const ALL_ROLES: readonly AppRole[] = ["stakeholder", "comms", "lead"];
 const COMMS_AND_LEAD: readonly AppRole[] = ["comms", "lead"];
 

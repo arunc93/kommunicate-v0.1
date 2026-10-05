@@ -38,10 +38,14 @@ export default function TemplatesPage() {
 
   return (
     <div>
-      <PageHeader title="Templates" />
+      <PageHeader
+        eyebrow="Library"
+        title="Templates"
+        description="Email and presentation starters. Search, then download."
+      />
 
-      <div className="mb-6 flex flex-wrap items-center gap-3">
-        <div className="relative min-w-[220px] flex-1">
+      <div className="panel mb-4 flex flex-col gap-2.5 p-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="relative w-full sm:min-w-[220px] sm:flex-1">
           <input
             type="text"
             placeholder="Search with name of template"
@@ -53,7 +57,7 @@ export default function TemplatesPage() {
                 fetchTemplates(search);
               }
             }}
-            className="w-full rounded-md border border-border bg-white px-4 py-2 pr-8 text-sm text-text outline-none focus:border-cobalt"
+            className="field pr-8"
           />
           {search ? (
             <button
@@ -71,15 +75,16 @@ export default function TemplatesPage() {
         </Button>
       </div>
 
-      <div className="overflow-hidden rounded-md border border-border bg-white shadow-elevation-1">
-        {templates.map((template, index) => (
+      <div className="panel overflow-hidden">
+        {templates.map((template) => (
           <div
             key={template.id}
-            className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-4 last:border-0 md:px-6"
+            className="flex flex-wrap items-center justify-between gap-3 border-t border-row-line px-4 py-4 first:border-t-0 md:px-5"
           >
-            <div className={index === 0 ? "h-10 w-1 shrink-0 rounded-sm bg-navy" : "h-10 w-1 shrink-0"} />
-            <span className="min-w-[180px] flex-1 font-medium text-text">{template.name}</span>
-            <span className="w-16 text-center text-sm text-text-muted">{template.fileType}</span>
+            <div className="min-w-[180px] flex-1">
+              <b className="block text-text">{template.name}</b>
+              <span className="text-xs text-text-muted">{template.fileType}</span>
+            </div>
             <Button type="button" variant="outline" size="sm" onClick={() => download(template)}>
               Download <Download className="h-3 w-3" />
             </Button>

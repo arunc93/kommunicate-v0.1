@@ -31,6 +31,7 @@ import {
   givenName,
   homeForRole,
   parsePerson,
+  roleLabel,
 } from "@/features/auth/access";
 import { clearStubSession, writeStubPerson, writeStubRole } from "@/features/auth/stub-session";
 
@@ -96,60 +97,48 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "flex w-full shrink-0 flex-row items-center bg-sidebar text-white md:min-h-screen md:flex-col md:items-stretch",
-        collapsed ? "md:w-[72px]" : "md:w-60",
+        "sidebar-surface flex w-full shrink-0 flex-col text-white md:h-full md:overflow-y-auto",
+        collapsed ? "md:w-[72px]" : "md:w-[248px]",
       )}
     >
-      <div className={cn("flex shrink-0 items-center gap-2 px-3 py-3 md:py-4", collapsed && "md:flex-col md:px-2")}>
+      <div className={cn("flex shrink-0 items-center gap-2.5 px-3 py-3", collapsed && "md:flex-col md:px-2 md:py-3.5")}>
         <button
           type="button"
           onClick={toggle}
           aria-label={collapsed ? "Expand sidebar" : "Retract sidebar"}
-          className="rounded-md p-2 hover:bg-white/10"
+          className="rounded-lg p-2 text-white/80 hover:bg-white/10"
         >
           <Menu className="h-5 w-5" />
         </button>
-        <Link href="/login" title="Kommunicate" className="min-w-0 text-white">
-          {collapsed ? (
-            <span className="flex h-8 w-8 items-center justify-center rounded-md border border-white/30 text-sm font-semibold">
-              K
-            </span>
-          ) : (
-            <span className="block">
-              <span className="block text-base font-semibold leading-5">Kommunicate</span>
-              <span className="block text-xs leading-4 text-white/70">KGS Consulting</span>
-            </span>
-          )}
+        <Link href="/login" title="Kommunicate" className="flex min-w-0 items-center gap-2.5 text-white">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-cobalt text-sm font-bold">K</span>
+          <span className={cn("min-w-0", collapsed && "md:sr-only")}>
+            <span className="block text-[15px] font-bold leading-5">Kommunicate</span>
+            <span className="hidden text-[11px] text-white/55 md:block">KGS Consulting</span>
+          </span>
         </Link>
-      </div>
-
-      <div
-        className={cn(
-          "flex shrink-0 items-center gap-2 px-3 py-1 md:flex-col md:gap-2 md:px-3 md:pb-4 md:pt-1",
-          collapsed && "md:px-2",
-        )}
-      >
-        <div
-          className={cn(
-            "relative overflow-hidden rounded-full",
-            collapsed ? "h-10 w-10" : "h-10 w-10 md:h-20 md:w-20",
-          )}
-          title={previewPerson}
-        >
-          <Image
-            src={PREVIEW_AVATARS[previewPerson]}
-            alt=""
-            fill
-            sizes="80px"
-            className="object-cover"
-          />
+        <div className="ml-auto flex items-center gap-2 md:hidden">
+          <div className="relative h-9 w-9 overflow-hidden rounded-full" title={previewPerson}>
+            <Image src={PREVIEW_AVATARS[previewPerson]} alt="" fill sizes="36px" className="object-cover" />
+          </div>
+          <button
+            type="button"
+            onClick={signOut}
+            aria-label="Sign out"
+            className="rounded-lg p-2 text-white/80 hover:bg-white/10"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
-        <p className={cn("truncate text-sm text-white md:text-center", collapsed && "sr-only")}>
-          {givenName(previewPerson)}
-        </p>
       </div>
 
-      <nav className="flex min-w-0 flex-1 gap-1 overflow-x-auto px-2 py-3 md:flex-none md:flex-col md:overflow-visible md:px-3 md:py-0 md:pb-6">
+      {!collapsed && (
+        <p className="mb-1.5 mt-1 hidden px-6 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35 md:block">
+          Workspace
+        </p>
+      )}
+
+      <nav className="flex min-w-0 gap-1 overflow-x-auto px-2 pb-2 md:flex-1 md:flex-col md:overflow-visible md:px-3 md:pb-4">
         {items.map((item) => {
           const Icon = ICONS[item.icon];
           const active =
@@ -162,46 +151,61 @@ export function Sidebar({
               title={item.label}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm leading-5 text-white",
-                active ? "bg-cobalt" : "hover:bg-white/10",
+                "flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2.5 text-sm leading-5 text-white/75",
+                active ? "bg-white/10 text-white" : "hover:bg-white/10 hover:text-white",
                 collapsed && "justify-center px-2 md:px-2",
               )}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className="h-4 w-4 shrink-0 text-light-blue" />
               <span className={cn(collapsed && "sr-only")}>{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="flex shrink-0 items-center gap-2 px-2 py-3 md:mt-auto md:flex-col md:items-stretch md:border-t md:border-white/10 md:px-3 md:py-4">
+      <div
+        className={cn(
+          "mt-auto hidden shrink-0 flex-col gap-3 border-t border-white/10 px-3 py-4 md:flex",
+          process.env.NODE_ENV === "development" && "md:pb-16",
+        )}
+      >
+        <div className={cn("flex items-center gap-2.5 px-1", collapsed && "md:justify-center md:px-0")}>
+          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full" title={previewPerson}>
+            <Image src={PREVIEW_AVATARS[previewPerson]} alt="" fill sizes="40px" className="object-cover" />
+          </div>
+          <div className={cn("min-w-0", collapsed && "sr-only")}>
+            <b className="block truncate text-sm">{givenName(previewPerson)}</b>
+            <small className="block text-[11px] text-white/55">{roleLabel(role)}</small>
+          </div>
+        </div>
+
         {stub && !collapsed && (
           <div className="hidden flex-col gap-3 md:flex">
-            <p className="px-1 text-xs leading-4 text-white/70">
+            <p className="px-1 text-[11px] leading-4 text-white/55">
               Preview session. Supabase is not configured.
             </p>
-            <label className="flex flex-col gap-1 px-1 text-xs leading-4 text-white/80" htmlFor="sidebar-role">
+            <label className="flex flex-col gap-1 px-1 text-[11px] text-white/70" htmlFor="sidebar-role">
               Preview role
               <select
                 id="sidebar-role"
                 value={role}
                 onChange={(event) => switchRole(event.target.value as AppRole)}
-                className="rounded-md border border-white/20 bg-sidebar px-2 py-2 text-sm text-white outline-none"
+                className="rounded-lg border border-white/15 bg-white/5 px-2 py-2 text-sm text-white outline-none"
               >
                 {ROLES.map((value) => (
                   <option key={value} value={value}>
-                    {value === "comms" ? "Comms" : value[0].toUpperCase() + value.slice(1)}
+                    {roleLabel(value)}
                   </option>
                 ))}
               </select>
             </label>
-            <label className="flex flex-col gap-1 px-1 text-xs leading-4 text-white/80" htmlFor="sidebar-person">
+            <label className="flex flex-col gap-1 px-1 text-[11px] text-white/70" htmlFor="sidebar-person">
               Preview person
               <select
                 id="sidebar-person"
                 value={previewPerson}
                 onChange={(event) => switchPerson(event.target.value as PreviewPerson)}
-                className="rounded-md border border-white/20 bg-sidebar px-2 py-2 text-sm text-white outline-none"
+                className="rounded-lg border border-white/15 bg-white/5 px-2 py-2 text-sm text-white outline-none"
               >
                 {PREVIEW_PEOPLE.map((name) => (
                   <option key={name} value={name}>
@@ -217,7 +221,7 @@ export function Sidebar({
           onClick={signOut}
           title="Sign out"
           className={cn(
-            "flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-white hover:bg-white/10",
+            "flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-white/80 hover:bg-white/10 hover:text-white",
             collapsed && "justify-center px-2",
           )}
         >

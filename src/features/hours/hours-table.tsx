@@ -23,43 +23,43 @@ export function HoursTable({
   const total = rows.reduce((sum, row) => sum + row.hours, 0);
 
   return (
-    <div className="overflow-hidden rounded-md border border-border bg-white shadow-elevation-1">
+    <div className="panel overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="data-table">
           <thead>
-            <tr className="border-b border-border bg-surface">
-              <th className="px-4 py-3 text-left font-semibold text-text">Date</th>
-              {showProject && <th className="px-4 py-3 text-left font-semibold text-text">Project</th>}
-              {showPerson && <th className="px-4 py-3 text-left font-semibold text-text">Person</th>}
-              <th className="px-4 py-3 text-left font-semibold text-text">Category</th>
-              <th className="px-4 py-3 text-left font-semibold text-text">Sub-category</th>
-              <th className="px-4 py-3 text-left font-semibold text-text">Hours</th>
-              <th className="px-4 py-3 text-left font-semibold text-text">Remarks</th>
+            <tr>
+              <th>Date</th>
+              {showProject && <th>Project</th>}
+              {showPerson && <th>Person</th>}
+              <th>Category</th>
+              <th>Sub-category</th>
+              <th>Hours</th>
+              <th>Remarks</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td className="px-4 py-6 text-text-muted" colSpan={7}>
+                <td className="text-text-muted" colSpan={7}>
                   No hours yet.
                 </td>
               </tr>
             ) : (
               rows.map((row) => (
-                <tr key={row.id} className="border-b border-border last:border-b-0">
-                  <td className="px-4 py-3 text-text">{formatDate(row.date)}</td>
+                <tr key={row.id}>
+                  <td className="text-text">{formatDate(row.date)}</td>
                   {showProject && (
-                    <td className="px-4 py-3 text-text">
+                    <td className="text-text">
                       {row.request
                         ? `${row.request.projectNumber} ${row.request.projectName}`
                         : ""}
                     </td>
                   )}
-                  {showPerson && <td className="px-4 py-3 text-text">{row.effortSpentBy}</td>}
-                  <td className="px-4 py-3 text-text">{row.category}</td>
-                  <td className="px-4 py-3 text-text">{row.subCategory}</td>
-                  <td className="px-4 py-3 text-text">{row.hours}</td>
-                  <td className="px-4 py-3 text-text-muted">{row.remarks}</td>
+                  {showPerson && <td className="text-text">{row.effortSpentBy}</td>}
+                  <td className="text-text">{row.category}</td>
+                  <td className="text-text">{row.subCategory}</td>
+                  <td className="text-text">{row.hours}</td>
+                  <td>{row.remarks}</td>
                 </tr>
               ))
             )}

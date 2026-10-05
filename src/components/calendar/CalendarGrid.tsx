@@ -53,13 +53,13 @@ export function CalendarGrid({
   const getEventsForDay = (day: Date) => events.filter((event) => isSameDay(new Date(event.date), day));
 
   return (
-    <div className="overflow-hidden rounded-md border border-border bg-white shadow-elevation-1">
+    <div className="panel overflow-hidden">
       <div className="flex items-center justify-between gap-2 bg-navy px-4 py-3 text-white">
         <button
           type="button"
           onClick={onPrevMonth}
           aria-label="Previous month"
-          className="rounded-md p-1 hover:bg-white/10"
+          className="rounded-lg p-1 hover:bg-white/10"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -90,15 +90,18 @@ export function CalendarGrid({
           type="button"
           onClick={onNextMonth}
           aria-label="Next month"
-          className="rounded-md p-1 hover:bg-white/10"
+          className="rounded-lg p-1 hover:bg-white/10"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 border-b border-border bg-surface">
+      <div className="grid grid-cols-7 border-b border-row-line bg-table-head">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div key={day} className="py-2 text-center text-sm font-semibold text-text">
+          <div
+            key={day}
+            className="py-2 text-center text-[11px] font-bold uppercase tracking-[0.08em] text-text-muted"
+          >
             {day}
           </div>
         ))}
@@ -114,7 +117,7 @@ export function CalendarGrid({
             <div
               key={day.toISOString()}
               className={cn(
-                "min-h-[100px] border border-border p-1.5",
+                "min-h-[92px] border border-row-line p-2",
                 !inMonth && "bg-surface",
                 today && "bg-light-blue/40 ring-1 ring-inset ring-cobalt",
               )}
@@ -126,7 +129,7 @@ export function CalendarGrid({
                 {dayEvents.map((event) => {
                   const chip = (
                     <div
-                      className="truncate rounded-sm px-1.5 py-0.5 text-[10px] leading-4 text-white"
+                      className="truncate rounded-md px-1.5 py-0.5 text-[10px] font-bold leading-4 text-white"
                       style={{ backgroundColor: eventChipColor(event.color) }}
                       title={event.title}
                     >

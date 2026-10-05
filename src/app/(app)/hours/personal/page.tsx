@@ -17,7 +17,11 @@ export default function PersonalHoursPage() {
 
   return (
     <div>
-      <PageHeader title={`Hours for ${person}`} />
+      <PageHeader
+        eyebrow="Effort"
+        title={`Hours for ${person}`}
+        description="Hours for this person."
+      />
       {rows ? (
         <HoursTable rows={rows} showProject />
       ) : (

@@ -1,25 +1,30 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-kpmg-blue: #00338D;
-  --color-cobalt: #1E49E2;
-  --color-light-blue: #ABECFF;
-  --color-pacific: #00B8F6;
-  --color-navy: #0D253E;
-  --color-sidebar: #082038;
-  --color-purple: #790DDA;
-  --color-pink: #F83098;
-  --color-surface: #F7F8FA;
-  --color-border: #E1E7F1;
-  --color-text: #0D253E;
-  --color-text-muted: #506078;
-  --color-success: #1B7F4E;
-  --color-error: #B00020;
+  --color-kpmg-blue: #00338d;
+  --color-cobalt: #1e49e2;
+  --color-light-blue: #abecff;
+  --color-pacific: #00b8f6;
+  --color-navy: #0d253e;
+  --color-sidebar: #07182c;
+  --color-purple: #790dda;
+  --color-pink: #f83098;
+  --color-surface: #eef2f6;
+  --color-border: #d7e0ec;
+  --color-text: #0d253e;
+  --color-text-muted: #5a6b80;
+  --color-success: #1b7f4e;
+  --color-error: #b00020;
+  --color-table-head: #f6f8fb;
+  --color-row-line: #e7eef6;
+  --color-table-text: #33485f;
   --font-sans: Arial, "Helvetica Neue", Helvetica, sans-serif;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
-  --shadow-elevation-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --radius-panel: 16px;
+  --radius-pill: 999px;
+  --shadow-elevation-1: 0 1px 2px rgba(7, 24, 44, 0.04), 0 8px 24px rgba(7, 24, 44, 0.06);
 }
 
 * {
@@ -31,6 +36,142 @@ body {
   background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-sans);
+}
+
+.sidebar-surface {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-cobalt) 18%, transparent), transparent 28%),
+    var(--color-sidebar);
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-elevation-1);
+}
+
+.kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-cobalt);
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.field {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-text);
+  background: #fff;
+  outline: none;
+}
+
+.field:focus {
+  border-color: var(--color-cobalt);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-cobalt) 12%, transparent);
+}
+
+.field[readonly] {
+  cursor: default;
+  background: var(--color-table-head);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-pill);
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.chip-dark {
+  background: var(--color-sidebar);
+  color: #fff;
+  border-color: var(--color-sidebar);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  background: var(--color-table-head);
+  padding: 12px 16px;
+}
+
+.data-table td {
+  padding: 14px 16px;
+  border-top: 1px solid var(--color-row-line);
+  color: var(--color-table-text);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:hover td {
+  background: color-mix(in srgb, var(--color-table-head) 65%, white);
+}
+
+.choice,
+.person-pick {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.choice {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px;
+}
+
+.choice.on,
+.person-pick.on {
+  border-color: var(--color-cobalt);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-cobalt) 12%, transparent);
+}
+
+.person-pick {
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.login-brand {
+  color: #fff;
+  background:
+    radial-gradient(520px 320px at 80% 10%, color-mix(in srgb, var(--color-pink) 35%, transparent), transparent 60%),
+    radial-gradient(480px 280px at 10% 90%, color-mix(in srgb, var(--color-pacific) 28%, transparent), transparent 55%),
+    linear-gradient(160deg, var(--color-kpmg-blue), var(--color-sidebar) 48%, color-mix(in srgb, var(--color-purple) 72%, black));
 }
 
 .login-gradient {

@@ -15,15 +15,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       sidebar: "bg-white/10 hover:bg-white/15 text-white border-transparent w-full justify-start",
     };
     const sizes = {
-      sm: "px-3 py-1.5 text-sm",
-      md: "px-4 py-2 text-sm",
-      lg: "px-6 py-2.5 text-base",
+      sm: "px-3 py-1.5 text-xs",
+      md: "px-3.5 py-2.5 text-[13px]",
+      lg: "px-4 py-2.5 text-sm",
     };
     return (
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center gap-2 rounded-md font-medium transition-colors border",
+          "inline-flex items-center gap-2 rounded-lg border font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60",
           variants[variant],
           sizes[size],
           className
