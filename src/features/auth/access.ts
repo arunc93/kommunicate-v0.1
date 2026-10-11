@@ -46,6 +46,11 @@ export function isSupabaseConfigured(): boolean {
   );
 }
 
+/** Email sign-in is not wired yet, so the preview cookies stay in use. */
+export function isSupabaseAuthEnabled(): boolean {
+  return false;
+}
+
 export function parseRole(value: string | undefined | null): AppRole | null {
   if (value === "stakeholder" || value === "comms" || value === "lead") return value;
   return null;

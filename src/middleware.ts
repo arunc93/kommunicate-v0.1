@@ -3,12 +3,12 @@ import {
   STUB_ROLE_COOKIE,
   canAccess,
   homeForRole,
-  isSupabaseConfigured,
+  isSupabaseAuthEnabled,
   parseRole,
 } from "@/features/auth/access";
 
 export function middleware(request: NextRequest) {
-  if (isSupabaseConfigured()) return NextResponse.next();
+  if (isSupabaseAuthEnabled()) return NextResponse.next();
 
   const { pathname } = request.nextUrl;
   const role = parseRole(request.cookies.get(STUB_ROLE_COOKIE)?.value);

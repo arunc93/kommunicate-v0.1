@@ -62,11 +62,14 @@ export function Sidebar({
   const pathname = usePathname();
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
+  const [motionReady, setMotionReady] = useState(false);
   const items = NAV_ITEMS.filter((item) => item.roles.includes(role));
   const previewPerson = parsePerson(person);
 
   useEffect(() => {
     setCollapsed(window.localStorage.getItem(STORAGE_KEY) === "1");
+    const frame = requestAnimationFrame(() => setMotionReady(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   const toggle = () => {
@@ -94,25 +97,52 @@ export function Sidebar({
     router.refresh();
   };
 
+  const ease = cn(
+    "duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+    !motionReady && "transition-none",
+  );
+
   return (
     <aside
       className={cn(
-        "sidebar-surface flex w-full shrink-0 flex-col text-white md:h-full md:overflow-y-auto",
-        collapsed ? "md:w-[72px]" : "md:w-[248px]",
+        "sidebar-surface flex w-full shrink-0 flex-col overflow-x-hidden text-white md:h-full md:overflow-y-auto md:transition-[width]",
+        ease,
+        collapsed ? "md:w-[60px]" : "md:w-[248px]",
       )}
     >
-      <div className={cn("flex shrink-0 items-center gap-2.5 px-3 py-3", collapsed && "md:flex-col md:px-2 md:py-3.5")}>
+      <div
+        className={cn(
+          "relative flex shrink-0 items-center gap-2 overflow-hidden px-3 py-3 md:block md:transition-[height]",
+          ease,
+          collapsed ? "md:h-[104px]" : "md:h-[60px]",
+        )}
+      >
         <button
           type="button"
           onClick={toggle}
           aria-label={collapsed ? "Expand sidebar" : "Retract sidebar"}
-          className="rounded-lg p-2 text-white/80 hover:bg-white/10"
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-white/80 hover:bg-white/10 md:absolute md:left-3 md:top-3"
         >
           <Menu className="h-5 w-5" />
         </button>
-        <Link href="/login" title="Kommunicate" className="flex min-w-0 items-center gap-2.5 text-white">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-cobalt text-sm font-bold">K</span>
-          <span className={cn("min-w-0", collapsed && "md:sr-only")}>
+        <Link href="/login" title="Kommunicate" className="flex min-w-0 items-center gap-2.5 text-white md:contents">
+          <span
+            className={cn(
+              "grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-cobalt text-sm font-bold md:absolute md:left-3 md:top-3 md:transition-transform",
+              ease,
+              collapsed ? "md:translate-x-0 md:translate-y-11" : "md:translate-x-11 md:translate-y-0",
+            )}
+          >
+            K
+          </span>
+          <span
+            className={cn(
+              "block min-w-0 overflow-hidden whitespace-nowrap transition-[max-width,opacity] md:absolute md:left-26 md:top-3",
+              ease,
+              "max-w-[140px] opacity-100",
+              collapsed && "md:max-w-0 md:opacity-0",
+            )}
+          >
             <span className="block text-[15px] font-bold leading-5">Kommunicate</span>
             <span className="hidden text-[11px] text-white/55 md:block">KGS Consulting</span>
           </span>
@@ -132,13 +162,31 @@ export function Sidebar({
         </div>
       </div>
 
-      {!collapsed && (
-        <p className="mb-1.5 mt-1 hidden px-6 text-[10px] font-bold uppercase tracking-[0.16em] text-white/35 md:block">
-          Workspace
-        </p>
-      )}
+      <div className="hidden items-center overflow-hidden px-3 pb-4 pt-1 md:flex">
+        <div
+          className={cn(
+            "relative h-20 w-20 shrink-0 overflow-hidden rounded-full transition-[width,height]",
+            ease,
+            collapsed && "md:h-9 md:w-9",
+          )}
+          title={previewPerson}
+        >
+          <Image src={PREVIEW_AVATARS[previewPerson]} alt="" fill sizes="80px" className="object-cover" />
+        </div>
+        <div
+          className={cn(
+            "min-w-0 overflow-hidden whitespace-nowrap transition-[max-width,opacity,margin]",
+            ease,
+            "ml-3 max-w-[140px] opacity-100",
+            collapsed && "md:ml-0 md:max-w-0 md:opacity-0",
+          )}
+        >
+          <b className="block text-sm">{givenName(previewPerson)}</b>
+          <small className="block text-[11px] text-white/55">{roleLabel(role)}</small>
+        </div>
+      </div>
 
-      <nav className="flex min-w-0 gap-1 overflow-x-auto px-2 pb-2 md:flex-1 md:flex-col md:overflow-visible md:px-3 md:pb-4">
+      <nav className="flex min-w-0 gap-1 overflow-x-auto px-3 pb-2 md:flex-1 md:flex-col md:overflow-visible md:pb-4">
         {items.map((item) => {
           const Icon = ICONS[item.icon];
           const active =
@@ -151,13 +199,23 @@ export function Sidebar({
               title={item.label}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2.5 text-sm leading-5 text-white/75",
+                "flex w-auto shrink-0 items-center overflow-hidden whitespace-nowrap rounded-lg py-1 text-sm leading-5 text-white/75 md:w-full md:shrink",
                 active ? "bg-white/10 text-white" : "hover:bg-white/10 hover:text-white",
-                collapsed && "justify-center px-2 md:px-2",
               )}
             >
-              <Icon className="h-4 w-4 shrink-0 text-light-blue" />
-              <span className={cn(collapsed && "sr-only")}>{item.label}</span>
+              <span className="grid h-9 w-9 shrink-0 place-items-center">
+                <Icon className="h-4 w-4 text-light-blue" />
+              </span>
+              <span
+                className={cn(
+                  "min-w-0 overflow-hidden whitespace-nowrap transition-[max-width,opacity,margin]",
+                  ease,
+                  "ml-2.5 max-w-[11rem] opacity-100",
+                  collapsed && "md:ml-0 md:max-w-0 md:opacity-0",
+                )}
+              >
+                {item.label}
+              </span>
             </Link>
           );
         })}
@@ -169,18 +227,16 @@ export function Sidebar({
           process.env.NODE_ENV === "development" && "md:pb-16",
         )}
       >
-        <div className={cn("flex items-center gap-2.5 px-1", collapsed && "md:justify-center md:px-0")}>
-          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full" title={previewPerson}>
-            <Image src={PREVIEW_AVATARS[previewPerson]} alt="" fill sizes="40px" className="object-cover" />
-          </div>
-          <div className={cn("min-w-0", collapsed && "sr-only")}>
-            <b className="block truncate text-sm">{givenName(previewPerson)}</b>
-            <small className="block text-[11px] text-white/55">{roleLabel(role)}</small>
-          </div>
-        </div>
-
-        {stub && !collapsed && (
-          <div className="hidden flex-col gap-3 md:flex">
+        {stub && (
+          <div
+            className={cn(
+              "grid transition-[grid-template-rows,opacity]",
+              ease,
+              collapsed ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100",
+            )}
+            inert={collapsed ? true : undefined}
+          >
+            <div className="flex flex-col gap-3 overflow-hidden">
             <p className="px-1 text-[11px] leading-4 text-white/55">
               Preview session. Supabase is not configured.
             </p>
@@ -214,19 +270,28 @@ export function Sidebar({
                 ))}
               </select>
             </label>
+            </div>
           </div>
         )}
         <button
           type="button"
           onClick={signOut}
           title="Sign out"
-          className={cn(
-            "flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-white/80 hover:bg-white/10 hover:text-white",
-            collapsed && "justify-center px-2",
-          )}
+          className="flex w-full items-center overflow-hidden rounded-lg py-1 text-left text-sm text-white/80 hover:bg-white/10 hover:text-white"
         >
-          <LogOut className="h-4 w-4 shrink-0" />
-          <span className={cn(collapsed && "sr-only")}>Sign out</span>
+          <span className="grid h-9 w-9 shrink-0 place-items-center">
+            <LogOut className="h-4 w-4" />
+          </span>
+          <span
+            className={cn(
+              "min-w-0 overflow-hidden whitespace-nowrap transition-[max-width,opacity,margin]",
+              ease,
+              "ml-2 max-w-[8rem] opacity-100",
+              collapsed && "md:ml-0 md:max-w-0 md:opacity-0",
+            )}
+          >
+            Sign out
+          </span>
         </button>
       </div>
     </aside>
