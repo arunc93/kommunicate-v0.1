@@ -46,9 +46,9 @@ export function isSupabaseConfigured(): boolean {
   );
 }
 
-/** Email sign-in is not wired yet, so the preview cookies stay in use. */
+/** Preview cookies stay in use only when the Supabase URL and anon key are missing. */
 export function isSupabaseAuthEnabled(): boolean {
-  return false;
+  return isSupabaseConfigured();
 }
 
 export function parseRole(value: string | undefined | null): AppRole | null {

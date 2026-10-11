@@ -34,6 +34,7 @@ import {
   roleLabel,
 } from "@/features/auth/access";
 import { clearStubSession, writeStubPerson, writeStubRole } from "@/features/auth/stub-session";
+import { createClient } from "@/lib/supabase/client";
 
 const ICONS: Record<NavIcon, LucideIcon> = {
   dashboard: Search,
@@ -49,6 +50,32 @@ const ICONS: Record<NavIcon, LucideIcon> = {
 };
 
 const STORAGE_KEY = "km_sidebar_collapsed";
+
+function initials(name: string): string {
+  const given = givenName(name);
+  const parts = given.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
+  return (given[0] ?? "?").toUpperCase();
+}
+
+function Avatar({ name, className }: { name: string; className?: string }) {
+  const known = (PREVIEW_PEOPLE as readonly string[]).includes(name);
+  if (known) {
+    return (
+      <div className={cn("relative overflow-hidden rounded-full", className)} title={name}>
+        <Image src={PREVIEW_AVATARS[name as PreviewPerson]} alt="" fill sizes="80px" className="object-cover" />
+      </div>
+    );
+  }
+  return (
+    <div
+      className={cn("grid place-items-center rounded-full bg-cobalt text-sm font-semibold text-white", className)}
+      title={name}
+    >
+      {initials(name)}
+    </div>
+  );
+}
 
 export function Sidebar({
   role,
@@ -91,8 +118,12 @@ export function Sidebar({
     router.refresh();
   };
 
-  const signOut = () => {
+  const signOut = async () => {
     clearStubSession();
+    if (!stub) {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+    }
     router.push("/login");
     router.refresh();
   };
@@ -148,9 +179,7 @@ export function Sidebar({
           </span>
         </Link>
         <div className="ml-auto flex items-center gap-2 md:hidden">
-          <div className="relative h-9 w-9 overflow-hidden rounded-full" title={previewPerson}>
-            <Image src={PREVIEW_AVATARS[previewPerson]} alt="" fill sizes="36px" className="object-cover" />
-          </div>
+          <Avatar name={person} className="h-9 w-9 shrink-0" />
           <button
             type="button"
             onClick={signOut}
@@ -165,24 +194,23 @@ export function Sidebar({
       <div className="hidden items-center overflow-hidden px-3 pb-4 pt-1 md:flex">
         <div
           className={cn(
-            "relative h-20 w-20 shrink-0 overflow-hidden rounded-full transition-[width,height]",
+            "relative h-20 w-20 shrink-0 transition-[width,height]",
             ease,
             collapsed && "md:h-9 md:w-9",
           )}
-          title={previewPerson}
         >
-          <Image src={PREVIEW_AVATARS[previewPerson]} alt="" fill sizes="80px" className="object-cover" />
-        </div>
-        <div
-          className={cn(
-            "min-w-0 overflow-hidden whitespace-nowrap transition-[max-width,opacity,margin]",
-            ease,
-            "ml-3 max-w-[140px] opacity-100",
-            collapsed && "md:ml-0 md:max-w-0 md:opacity-0",
-          )}
-        >
-          <b className="block text-sm">{givenName(previewPerson)}</b>
-          <small className="block text-[11px] text-white/55">{roleLabel(role)}</small>
+          <Avatar name={person} className="h-full w-full" />
+          <div
+            className={cn(
+              "absolute left-full top-1/2 min-w-0 -translate-y-1/2 overflow-hidden whitespace-nowrap transition-[max-width,opacity,margin]",
+              ease,
+              "ml-3 max-w-[140px] opacity-100",
+              collapsed && "md:ml-0 md:max-w-0 md:opacity-0",
+            )}
+          >
+            <b className="block text-sm">{givenName(person)}</b>
+            <small className="block text-[11px] text-white/55">{roleLabel(role)}</small>
+          </div>
         </div>
       </div>
 
