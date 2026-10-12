@@ -71,10 +71,11 @@ model HourEntry {
 }
 
 model Template {
-  id       String @id @default(cuid())
-  name     String
-  fileType String
-  fileUrl  String @default("#")
+  id         String  @id @default(cuid())
+  name       String
+  fileType   String
+  fileUrl    String  @default("#")
+  storedPath String?
 }
 
 model CalendarEvent {
