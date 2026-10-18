@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
@@ -86,6 +86,7 @@ export function RequestDetail({ requestKey: requestKeyFromServer }: { requestKey
   const [statusError, setStatusError] = useState("");
   const [savingStatus, setSavingStatus] = useState(false);
   const role = useAppRole();
+  const router = useRouter();
 
   const load = () => {
     fetch(`/api/requests/${encodeURIComponent(requestKey)}`, { cache: "no-store" })
@@ -205,6 +206,11 @@ export function RequestDetail({ requestKey: requestKeyFromServer }: { requestKey
       if (files.length > 0) {
         await uploadAttachments(request.id, files);
         setFiles([]);
+      }
+      if (role === "lead" || role === "comms") {
+        router.push("/dashboard");
+        router.refresh();
+        return;
       }
       load();
     } catch (uploadError) {

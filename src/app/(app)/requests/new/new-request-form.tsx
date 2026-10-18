@@ -11,12 +11,14 @@ import { CATEGORIES, TEAMS, GEO_OPTIONS } from "@/lib/types";
 import { AddHoursButton } from "@/features/hours/add-hours-button";
 import { AttachmentsField } from "@/features/requests/attachments-field";
 import { MAX_ATTACHMENT_BYTES } from "@/features/requests/attachment-limits";
+import { useAppRole } from "@/features/auth/role-context";
 import { missingRequestLabels } from "@/features/requests/required-fields";
 import { uploadAttachments } from "@/features/requests/upload-attachments";
 import { ArrowRight } from "lucide-react";
 
 export function NewRequestForm({ projectNumber }: { projectNumber: number }) {
   const router = useRouter();
+  const role = useAppRole();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [files, setFiles] = useState<File[]>([]);
@@ -87,7 +89,8 @@ export function NewRequestForm({ projectNumber }: { projectNumber: number }) {
       if (files.length > 0 && id) {
         await uploadAttachments(id, files);
       }
-      router.push(`/requests/${number}`);
+      router.push(role === "stakeholder" ? "/my-requests" : "/dashboard");
+      router.refresh();
     } catch (uploadError) {
       setError(uploadError instanceof Error ? uploadError.message : "Could not attach the file.");
     } finally {
